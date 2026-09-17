@@ -1,0 +1,17 @@
+.inline-subtitle { border: 0; padding: 0; border-radius: 0; background: transparent; color: #969ba3; font-size: 10px; }
+.inline-subtitle:focus { box-shadow: none; border-bottom: 1px solid #8a73ed; }
+.order-controls { display: flex; gap: 4px; }
+.order-controls .icon-button { width: 30px; height: 30px; }
+.media-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.media-card { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; align-items: center; border: 1px solid #eceef0; border-radius: 12px; padding: 9px; }
+.media-preview { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; background: #f3f4f6; }
+.media-preview img { width: 100%; height: 100%; object-fit: contain; }
+.media-card-copy { min-width: 0; display: grid; gap: 3px; }
+.media-card-copy span { color: #969ba3; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #f0edff; color: #6750d8; font-size: 11px; font-weight: 800; }
+.notice { margin: -8px 0 18px; padding: 12px 14px; border: 1px solid #f1dfad; border-radius: 10px; background: #fff9e8; color: #7b651f; font-size: 12px; line-height: 1.5; }
+
+@media (max-width: 620px) {
+  .media-grid { grid-template-columns: 1fr; }
+  .order-controls { order: 3; }
+}
