@@ -1,8 +1,18 @@
 import { useSyncExternalStore } from 'react'
 import { defaultDashboardState, defaultSettings } from '../data/defaults'
-import type { Brand, Collection, DashboardState, Product, StoreSettings } from '../types'
+import type {
+  AdminRole,
+  AdminUser,
+  Brand,
+  Collection,
+  DashboardState,
+  MediaAsset,
+  NavigationItem,
+  Product,
+  StoreSettings,
+} from '../types'
 
-const STORAGE_KEY = 'spacecall.dashboard.v1'
+const STORAGE_KEY = 'spacecall.dashboard.v2'
 
 type Listener = () => void
 
@@ -29,7 +39,7 @@ function loadInitialState(): DashboardState {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     if (!raw) return clone(defaultDashboardState)
     const parsed = JSON.parse(raw) as DashboardState
-    if (parsed.schemaVersion !== 1) return clone(defaultDashboardState)
+    if (parsed.schemaVersion !== 2) return clone(defaultDashboardState)
     return parsed
   } catch {
     return clone(defaultDashboardState)
@@ -225,6 +235,110 @@ export const dashboardStore = {
   deleteProduct(id: string) {
     updateState((draft) => {
       draft.products = draft.products.filter((item) => item.id !== id)
+    })
+  },
+
+  addMedia(input: Pick<MediaAsset, 'name' | 'url' | 'alt' | 'kind'>) {
+    const now = new Date().toISOString()
+    updateState((draft) => {
+      draft.media.unshift({
+        id: makeId('media'),
+        name: input.name.trim(),
+        url: input.url.trim(),
+        alt: input.alt.trim(),
+        kind: input.kind,
+        createdAt: now,
+        updatedAt: now,
+      })
+    })
+  },
+
+  updateMedia(id: string, patch: Partial<Omit<MediaAsset, 'id' | 'createdAt'>>) {
+    updateState((draft) => {
+      const asset = draft.media.find((item) => item.id === id)
+      if (!asset) return
+      Object.assign(asset, patch, { updatedAt: new Date().toISOString() })
+    })
+  },
+
+  deleteMedia(id: string) {
+    updateState((draft) => {
+      draft.media = draft.media.filter((item) => item.id !== id)
+    })
+  },
+
+  addNavigationItem(label: string, url: string) {
+    const now = new Date().toISOString()
+    updateState((draft) => {
+      draft.navigation.push({
+        id: makeId('nav'),
+        label: label.trim(),
+        url: url.trim(),
+        enabled: true,
+        sortOrder: draft.navigation.length,
+        createdAt: now,
+        updatedAt: now,
+      })
+    })
+  },
+
+  updateNavigationItem(id: string, patch: Partial<Omit<NavigationItem, 'id' | 'createdAt'>>) {
+    updateState((draft) => {
+      const item = draft.navigation.find((entry) => entry.id === id)
+      if (!item) return
+      Object.assign(item, patch, { updatedAt: new Date().toISOString() })
+    })
+  },
+
+  moveNavigationItem(id: string, direction: -1 | 1) {
+    updateState((draft) => {
+      const ordered = [...draft.navigation].sort((a, b) => a.sortOrder - b.sortOrder)
+      const index = ordered.findIndex((item) => item.id === id)
+      const swapIndex = index + direction
+      if (index < 0 || swapIndex < 0 || swapIndex >= ordered.length) return
+      const current = ordered[index]
+      const swap = ordered[swapIndex]
+      const currentOrder = current.sortOrder
+      current.sortOrder = swap.sortOrder
+      swap.sortOrder = currentOrder
+      current.updatedAt = new Date().toISOString()
+      swap.updatedAt = current.updatedAt
+      draft.navigation = ordered.sort((a, b) => a.sortOrder - b.sortOrder)
+    })
+  },
+
+  deleteNavigationItem(id: string) {
+    updateState((draft) => {
+      draft.navigation = draft.navigation.filter((item) => item.id !== id).map((item, index) => ({ ...item, sortOrder: index }))
+    })
+  },
+
+  addUser(name: string, email: string, role: AdminRole) {
+    const now = new Date().toISOString()
+    updateState((draft) => {
+      draft.users.push({
+        id: makeId('user'),
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        role,
+        active: true,
+        createdAt: now,
+        updatedAt: now,
+      })
+    })
+  },
+
+  updateUser(id: string, patch: Partial<Omit<AdminUser, 'id' | 'createdAt'>>) {
+    updateState((draft) => {
+      const user = draft.users.find((item) => item.id === id)
+      if (!user) return
+      Object.assign(user, patch, { updatedAt: new Date().toISOString() })
+    })
+  },
+
+  deleteUser(id: string) {
+    updateState((draft) => {
+      draft.users = draft.users.filter((item) => item.id !== id)
     })
   },
 
