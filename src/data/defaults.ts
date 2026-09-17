@@ -77,7 +77,7 @@ export const defaultSettings: StoreSettings = {
 }
 
 export const defaultDashboardState: DashboardState = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   settings: {
     draft: structuredClone(defaultSettings),
     published: structuredClone(defaultSettings),
@@ -87,4 +87,26 @@ export const defaultDashboardState: DashboardState = {
   brands: [],
   collections: [],
   products: [],
+  media: [],
+  navigation: [
+    {
+      id: 'nav_home',
+      label: 'Home',
+      url: '/',
+      enabled: true,
+      sortOrder: 0,
+      createdAt: new Date(0).toISOString(),
+      updatedAt: new Date(0).toISOString(),
+    },
+    {
+      id: 'nav_shop',
+      label: 'Shop',
+      url: '/collections/all',
+      enabled: true,
+      sortOrder: 1,
+      createdAt: new Date(0).toISOString(),
+      updatedAt: new Date(0).toISOString(),
+    },
+  ],
+  users: [],
 }
