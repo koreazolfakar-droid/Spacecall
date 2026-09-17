@@ -1,4 +1,5 @@
 export type PublishStatus = 'draft' | 'published'
+export type AdminRole = 'owner' | 'admin' | 'editor' | 'viewer'
 
 export interface AuditFields {
   id: string
@@ -53,6 +54,27 @@ export interface Product extends AuditFields {
   featured: boolean
   tags: string[]
   variants: ProductVariant[]
+}
+
+export interface MediaAsset extends AuditFields {
+  name: string
+  url: string
+  alt: string
+  kind: 'image' | 'icon'
+}
+
+export interface NavigationItem extends AuditFields {
+  label: string
+  url: string
+  enabled: boolean
+  sortOrder: number
+}
+
+export interface AdminUser extends AuditFields {
+  name: string
+  email: string
+  role: AdminRole
+  active: boolean
 }
 
 export interface SocialLinks {
@@ -159,9 +181,12 @@ export interface SettingsSnapshot {
 }
 
 export interface DashboardState {
-  schemaVersion: 1
+  schemaVersion: 2
   settings: SettingsSnapshot
   brands: Brand[]
   collections: Collection[]
   products: Product[]
+  media: MediaAsset[]
+  navigation: NavigationItem[]
+  users: AdminUser[]
 }
